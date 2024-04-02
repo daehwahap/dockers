@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+  db_master:
+    image: mysql:latest
+    container_name: mysql-master
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: dbname
+      MYSQL_USER: master_user
+      MYSQL_PASSWORD: master_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data/master:/var/lib/mysql
+    entrypoint: /entrypoint.sh
+
+  db_slave:
+    image: mysql:latest
+    container_name: mysql-slave
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: dbname
+      MYSQL_USER: slave_user
+      MYSQL_PASSWORD: slave_password
+      MYSQL_MASTER_HOST: db_master
+      MYSQL_MASTER_USER: master_user
+      MYSQL_MASTER_PASSWORD: master_password
+      MYSQL_MASTER_PORT: 3306
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./data/slave:/var/lib/mysql
+    entrypoint: /entrypoint.sh
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    ports:
+      - "8080:8080"
