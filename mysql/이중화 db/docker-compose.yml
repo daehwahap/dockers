@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  master:
+    # 마스터 데이터베이스 컨테이너 설정
+    build:
+      context: ./
+      dockerfile: master/Dockerfile
+    restart: always
+    environment:
+      MYSQL_DATABASE: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: 1234
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - 3306:3306
+    container_name: master
+    volumes:
+      - my-db-master:/var/lib/mysql
+      - my-db-master:/var/lib/mysql-files
+    networks:
+      - mynet
+
+  slave:
+    # 슬레이브 데이터베이스 컨테이너 설정
+    build:
+      context: ./
+      dockerfile: slave/Dockerfile
+    restart: always
+    environment:
+      MYSQL_DATABASE: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: 1234
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - 3307:3306
+    container_name: slave
+    volumes:
+      - my-db-slave:/var/lib/mysql
+      - my-db-slave:/var/lib/mysql-files
+    networks:
+      - mynet
+
+  # backend:
+  #   # 백엔드 서비스 컨테이너 설정
+  #   container_name: backend
+  #   image: daewhahap
+  #   expose:
+  #     - 8080
+  #   ports:
+  #     - 8080:8080
+  #   restart: always
+  #   depends_on:
+  #     - master
+  #     - slave
+  #   networks:
+  #     - mynet
+
+volumes:
+  my-db-master:
+  my-db-slave:
+
+networks:
+  mynet:
+    driver: bridge
