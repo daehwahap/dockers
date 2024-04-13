@@ -1,5 +1,7 @@
 USE mysql;
 
+CREATE DATABASE IF NOT EXISTS db;
+
 -- -- localhost 에서만 접속 가능한 계정 생성
 -- CREATE USER 'mysql'@'localhost' IDENTIFIED BY 'mysql';
 -- GRANT ALL PRIVILEGES ON *.* TO 'mysql'@'localhost';
